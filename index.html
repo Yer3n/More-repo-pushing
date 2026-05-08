@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random Landing Page</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: background 1s ease;
+        }
+
+        .background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            pointer-events: none;
+            animation: float 20s infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) translateX(0px); }
+            50% { transform: translateY(-50px) translateX(30px); }
+        }
+
+        .container {
+            text-align: center;
+            padding: 40px;
+            max-width: 800px;
+            z-index: 1;
+            animation: slideIn 0.8s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .subtitle {
+            font-size: 1.5rem;
+            margin-bottom: 40px;
+            opacity: 0.9;
+            min-height: 30px;
+            animation: fadeIn 1s ease-in 0.3s both;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .button-container {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+
+        button {
+            padding: 15px 40px;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        button:active {
+            transform: translateY(-1px);
+        }
+
+        .primary-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .secondary-btn {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+
+        .tertiary-btn {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-top: 50px;
+            flex-wrap: wrap;
+        }
+
+        .stat {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 20px 30px;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-top: 5px;
+        }
+
+        .floating-text {
+            position: absolute;
+            font-size: 2rem;
+            opacity: 0.1;
+            pointer-events: none;
+            animation: float-text 30s infinite linear;
+        }
+
+        @keyframes float-text {
+            from { transform: translateX(-100vw) translateY(0); }
+            to { transform: translateX(100vw) translateY(100vh); }
+        }
+
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+            .subtitle {
+                font-size: 1.1rem;
+            }
+            button {
+                padding: 12px 30px;
+                font-size: 0.9rem;
+            }
+            .stats {
+                gap: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="background" id="background"></div>
+    
+    <div class="container">
+        <h1 id="title">Welcome</h1>
+        <p class="subtitle" id="subtitle">Something awesome is about to happen...</p>
+        
+        <div class="button-container">
+            <button class="primary-btn" onclick="generateNew()">✨ Randomize</button>
+            <button class="secondary-btn" onclick="playSound()">🔊 Click Me!</button>
+            <button class="tertiary-btn" onclick="showMagic()">🎆 Magic!</button>
+        </div>
+
+        <div class="stats">
+            <div class="stat">
+                <span class="stat-number" id="stat1">0</span>
+                <span class="stat-label">Clicks</span>
+            </div>
+            <div class="stat">
+                <span class="stat-number" id="stat2">0</span>
+                <span class="stat-label">Refreshes</span>
+            </div>
+            <div class="stat">
+                <span class="stat-number" id="stat3">42</span>
+                <span class="stat-label">Fun Level</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const titles = [
+            "Welcome to Magic ✨",
+            "Hello, Creative Soul 🎨",
+            "Dive into Wonder 🌊",
+            "Unleash Your Power ⚡",
+            "Begin Your Journey 🚀",
+            "Embrace the Chaos 🎭",
+            "Welcome to the Future 🤖",
+            "Pure Vibes 🌈",
+            "You Found It! 🎉"
+        ];
+
+        const subtitles = [
+            "Something amazing is about to happen...",
+            "The adventure starts now.",
+            "Let's create something beautiful together.",
+            "Your creativity has no limits.",
+            "This is just the beginning.",
+            "Click, explore, dream.",
+            "The possibilities are infinite.",
+            "Welcome to excellence.",
+            "Prepare to be amazed."
+        ];
+
+        const gradients = [
+            "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+            "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)",
+            "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)",
+            "linear-gradient(135deg, #fa709a 0%, #fee140 100%)",
+            "linear-gradient(135deg, #30cfd0 0%, #330867 100%)",
+            "linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)",
+            "linear-gradient(135deg, #ff9a56 0%, #ff6a88 100%)",
+            "linear-gradient(135deg, #2e2e78 0%, #662d91 100%)"
+        ];
+
+        const colors = [
+            { bg: '#667eea', text: '#fff', accent: '#764ba2' },
+            { bg: '#f093fb', text: '#fff', accent: '#f5576c' },
+            { bg: '#4facfe', text: '#fff', accent: '#00f2fe' },
+            { bg: '#fa709a', text: '#fff', accent: '#fee140' },
+            { bg: '#30cfd0', text: '#fff', accent: '#330867' },
+            { bg: '#a8edea', text: '#333', accent: '#fed6e3' },
+            { bg: '#ff9a56', text: '#fff', accent: '#ff6a88' },
+            { bg: '#2e2e78', text: '#fff', accent: '#662d91' }
+        ];
+
+        let clickCount = 0;
+        let refreshCount = localStorage.getItem('refreshCount') || 0;
+
+        function generateNew() {
+            const randomGradient = gradients[Math.floor(Math.random() * gradients.length)];
+            const randomColor = colors[Math.floor(Math.random() * colors.length)];
+            
+            document.body.style.background = randomGradient;
+            document.getElementById('title').textContent = titles[Math.floor(Math.random() * titles.length)];
+            document.getElementById('subtitle').textContent = subtitles[Math.floor(Math.random() * subtitles.length)];
+            
+            createParticles(randomColor);
+            clickCount++;
+            document.getElementById('stat1').textContent = clickCount;
+        }
+
+        function createParticles(color) {
+            const bg = document.getElementById('background');
+            bg.innerHTML = '';
+            
+            for (let i = 0; i < 15; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.width = Math.random() * 100 + 20 + 'px';
+                particle.style.height = particle.style.width;
+                particle.style.backgroundColor = color.accent;
+                particle.style.opacity = Math.random() * 0.3 + 0.1;
+                particle.style.animationDelay = Math.random() * 5 + 's';
+                particle.style.animationDuration = Math.random() * 15 + 15 + 's';
+                bg.appendChild(particle);
+            }
+        }
+
+        function playSound() {
+            const context = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = context.createOscillator();
+            const gain = context.createGain();
+            
+            oscillator.connect(gain);
+            gain.connect(context.destination);
+            
+            oscillator.frequency.setValueAtTime(800, context.currentTime);
+            oscillator.frequency.exponentialRampToValueAtTime(200, context.currentTime + 0.1);
+            
+            gain.gain.setValueAtTime(0.3, context.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, context.currentTime + 0.1);
+            
+            oscillator.start(context.currentTime);
+            oscillator.stop(context.currentTime + 0.1);
+        }
+
+        function showMagic() {
+            for (let i = 0; i < 50; i++) {
+                const elem = document.createElement('div');
+                elem.style.position = 'fixed';
+                elem.style.pointerEvents = 'none';
+                elem.textContent = ['✨', '🌟', '💫', '⭐', '🎆', '🎇'][Math.floor(Math.random() * 6)];
+                elem.style.fontSize = Math.random() * 40 + 20 + 'px';
+                elem.style.left = Math.random() * window.innerWidth + 'px';
+                elem.style.top = Math.random() * window.innerHeight + 'px';
+                elem.style.animation = 'float 2s ease-out forwards';
+                elem.style.zIndex = 10;
+                document.body.appendChild(elem);
+                
+                setTimeout(() => elem.remove(), 2000);
+            }
+            playSound();
+        }
+
+        // Initialize
+        window.onload = () => {
+            refreshCount++;
+            localStorage.setItem('refreshCount', refreshCount);
+            document.getElementById('stat2').textContent = refreshCount;
+            generateNew();
+        };
+    </script>
+</body>
+</html>
